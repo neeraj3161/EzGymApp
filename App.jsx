@@ -12,6 +12,7 @@ import SplashScreen from './app/screens/Splash/SplashScreen'; // 👈 create thi
 
 import { themes } from './app/utils/theme';
 import BMIScreen from './app/screens/UtilityScreens/BMIScreen';
+import QRScreen from './app/screens/UtilityScreens/QRScreen';
 const theme = themes.dark;
 
 const Tab = createBottomTabNavigator();
@@ -68,6 +69,8 @@ export default function App() {
         )}
 
         <Stack.Screen name="BMI" component={BMIScreen} />
+        <Stack.Screen name="OQ" component={QRScreen} />
+
 
       </Stack.Navigator>
     </NavigationContainer>

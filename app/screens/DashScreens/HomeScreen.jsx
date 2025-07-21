@@ -41,7 +41,7 @@ const navigation = useNavigation();
 
         {/* PAYMENTS */}
         <Section title="Payments">
-          <Card label="Show QR" icon="qr-code-outline" />
+          <Card label="Show QR" icon="qr-code-outline" onPress={() => navigation.navigate('OQ')}  />
           <Card label="Generate QR" icon="qr-code" />
           <Card label="Recent Transactions" icon="time-outline" />
         </Section>

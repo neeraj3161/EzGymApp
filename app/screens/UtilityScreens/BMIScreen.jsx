@@ -68,12 +68,12 @@ export default function BMIScreen() {
     )}
 
     <View style={styles.infoContainer}>
-      <Text style={styles.infoTitle}>What is BMI?</Text>
+      {/* <Text style={styles.infoTitle}>What is BMI?</Text>
       <Text style={styles.infoText}>
         Body Mass Index (BMI) is a value derived from the mass (weight) and height of a person. 
         It is calculated using the formula:
       </Text>
-      <Text style={styles.formulaText}>BMI = weight (kg) / [height (m)]²</Text>
+      <Text style={styles.formulaText}>BMI = weight (kg) / [height (m)]²</Text> */}
 
       <Text style={styles.tableTitle}>BMI Classification:</Text>
       <View style={styles.table}>
