@@ -28,6 +28,22 @@ const navigation = useNavigation();
           <Icon name="chevron-forward" size={22} color={theme.textSecondary} />
         </View>
 
+
+        {/* MEMBERS */}
+        <Section title="Membership">
+          <Card label="Defaulters" icon="alert-circle-outline" showDot={true} onPress={() => navigation.navigate('OQ')}  />
+          <Card label="Due today" showDot={true} icon="calendar-outline" />
+          <Card label="Followups" icon="repeat-outline" />
+        </Section>
+
+        {/* PAYMENTS */}
+        <Section title="Payments">
+          <Card label="Show QR" icon="qr-code-outline" onPress={() => navigation.navigate('OQ')}  />
+          <Card label="Generate QR" icon="qr-code" />
+          <Card label="Recent Transactions" icon="time-outline" />
+        </Section>
+
+        
         {/* DIET & HEALTH */}
         <Section title="Diet & Health">
           <Card label="Prepare Diet Plan" icon="nutrition-outline" />
@@ -39,18 +55,11 @@ const navigation = useNavigation();
 
         </Section>
 
-        {/* PAYMENTS */}
-        <Section title="Payments">
-          <Card label="Show QR" icon="qr-code-outline" onPress={() => navigation.navigate('OQ')}  />
-          <Card label="Generate QR" icon="qr-code" />
-          <Card label="Recent Transactions" icon="time-outline" />
-        </Section>
-
         {/* SETTINGS */}
-        <Section title="Settings">
+        {/* <Section title="Settings">
           <Card label="Private Mode" icon="eye-off-outline" />
           <Card label="Bluetooth" icon="bluetooth" />
-        </Section>
+        </Section> */}
 
         {/* INSIGHTS */}
         <Section title="Insights">
@@ -87,9 +96,12 @@ const Section = ({ title, children }) => (
   </View>
 );
 
-const Card = ({ label, icon, onPress }) => (
+const Card = ({ label, icon, onPress, showDot }) => (
   <TouchableOpacity onPress={onPress} style={styles.card} activeOpacity={0.8}>
-    <Icon name={icon} size={22} color={theme.primary} style={{ marginBottom: 8 }} />
+    <View style={styles.iconWrapper}>
+      <Icon name={icon} size={22} color={theme.primary} />
+      {showDot && <View style={styles.redDot} />}
+    </View>
     <Text style={styles.cardLabel}>{label}</Text>
   </TouchableOpacity>
 );
@@ -158,8 +170,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 12,
     justifyContent: 'space-between',
-  },
-  card: {
+  },card: {
     width: '48%',
     padding: 16,
     borderRadius: 16,
@@ -173,6 +184,19 @@ const styles = StyleSheet.create({
     color: theme.textPrimary,
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
+  },
+  iconWrapper: {
+    position: 'relative',
+    marginBottom: 8,
+  },
+  redDot: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
   },
 });
 

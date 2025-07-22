@@ -13,25 +13,55 @@ import SplashScreen from './app/screens/Splash/SplashScreen'; // 👈 create thi
 import { themes } from './app/utils/theme';
 import BMIScreen from './app/screens/UtilityScreens/BMIScreen';
 import QRScreen from './app/screens/UtilityScreens/QRScreen';
+import AllMembers from './app/screens/DashScreens/AllMembers';
+import MemberDetailScreen from './app/screens/UtilityScreens/Members/MemberDetailScreen';
+import MembersBirthdayList from './app/screens/UtilityScreens/Members/MembersBirthdayList';
+import { View } from 'react-native';
 const theme = themes.dark;
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+
 function MainTabs() {
+  const [hasBirthdays, setHasBirthdays] = useState(true);
+useEffect(() => {
+  const checkBirthdays = async () => {
+    const result = await getTodayBirthdays();
+    setHasBirthdays(result.length > 0);
+  };
+  checkBirthdays();
+}, []);
+
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
           switch (route.name) {
-            case 'Home': iconName = 'home-outline'; break;
-            case 'Inventory': iconName = 'cube-outline'; break;
+            case 'Home': iconName = 'home-outline'; break; 
             case 'Reports': iconName = 'bar-chart-outline'; break;
             case 'Settings': iconName = 'settings-outline'; break;
+            case 'Birthday': iconName = 'gift-outline'; break;
             default: iconName = 'ellipse-outline';
           }
-          return <Icon name={iconName} size={size} color={color} />;
+          return (
+        <View>
+          <Icon name={iconName} size={size} color={color} />
+          {route.name === 'Birthday' && hasBirthdays && (
+            <View style={{
+              position: 'absolute',
+              top: -2,
+              right: -8,
+              backgroundColor: 'red',
+              borderRadius: 6,
+              width: 10,
+              height: 10,
+            }} />
+          )}
+        </View>
+          )
         },
         tabBarStyle: {
           backgroundColor: theme.background,
@@ -44,7 +74,10 @@ function MainTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Inventory" component={InventoryScreen} />
+      <Tab.Screen name="AllMembers" component={AllMembers}/> 
+     <Tab.Screen name="Birthday" component={MembersBirthdayList} />
+     {/* <Tab.Screen name="Inventory" component={InventoryScreen} /> */}
+
       <Tab.Screen name="Reports" component={ReportsScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
@@ -70,6 +103,7 @@ export default function App() {
 
         <Stack.Screen name="BMI" component={BMIScreen} />
         <Stack.Screen name="OQ" component={QRScreen} />
+        <Stack.Screen name="MemberDetail" component={MemberDetailScreen} /> 
 
 
       </Stack.Navigator>
