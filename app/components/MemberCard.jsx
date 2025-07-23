@@ -24,7 +24,9 @@ const MemberCard = ({ member, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: theme.cardBackground,
+      backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
     padding: 16,
     marginBottom: 12,
     borderRadius: 16,

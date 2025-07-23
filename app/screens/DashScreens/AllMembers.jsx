@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: colors.primary,
+    color: colors.textPrimary,
     fontFamily: 'Poppins',
   },
   searchBar: {

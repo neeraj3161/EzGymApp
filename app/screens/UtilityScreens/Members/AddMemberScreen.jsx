@@ -65,18 +65,38 @@ const [dob, setDob] = useState(new Date(2008, 0, 1)); // January 1, 2008
     navigation.goBack();
   };
 
-  const handleDobChange = (event, selectedDate) => {
-    setShowDobPicker(false);
-    if (selectedDate) setDob(selectedDate);
-  };
+ const handleDobChange = (event, selectedDate) => {
+  setShowDobPicker(false);
+  if (selectedDate) {
+    setDob(selectedDate);
+
+    // Calculate age
+    const today = new Date();
+    let age = today.getFullYear() - selectedDate.getFullYear();
+    const m = today.getMonth() - selectedDate.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < selectedDate.getDate())) {
+      age--;
+    }
+
+    setAge(age.toString());
+  }
+};
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>Name</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} />
 
-      <Text style={styles.label}>Age</Text>
-      <TextInput style={styles.input} value={age} onChangeText={setAge} keyboardType="numeric" />
+     <Text style={styles.label}>Age</Text>
+<TextInput
+  style={styles.input}
+  value={age}
+  editable={false}
+  placeholder="Auto-calculated from DOB"
+  placeholderTextColor={theme.textSecondary}
+/>
 
       <Text style={styles.label}>Phone Number</Text>
       <TextInput style={styles.input} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
