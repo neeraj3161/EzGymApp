@@ -1,5 +1,5 @@
 const darkTheme = {
-  background: '#061829',
+  background: '#000f24',
   cardBackground: '#0E2433',
   primary: '#5CE1E6',
   secondary: '#3EB3CC',

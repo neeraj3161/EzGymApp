@@ -17,6 +17,7 @@ import AllMembers from './app/screens/DashScreens/AllMembers';
 import MemberDetailScreen from './app/screens/UtilityScreens/Members/MemberDetailScreen';
 import MembersBirthdayList from './app/screens/UtilityScreens/Members/MembersBirthdayList';
 import { View } from 'react-native';
+import AddMemberScreen from './app/screens/UtilityScreens/Members/AddMemberScreen';
 const theme = themes.dark;
 
 const Tab = createBottomTabNavigator();
@@ -104,6 +105,7 @@ export default function App() {
         <Stack.Screen name="BMI" component={BMIScreen} />
         <Stack.Screen name="OQ" component={QRScreen} />
         <Stack.Screen name="MemberDetail" component={MemberDetailScreen} /> 
+        <Stack.Screen name="AddMember" component={AddMemberScreen} />
 
 
       </Stack.Navigator>

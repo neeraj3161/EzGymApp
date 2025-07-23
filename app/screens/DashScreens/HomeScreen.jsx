@@ -1,88 +1,63 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { themes } from '../../utils/theme';
 import { useNavigation } from '@react-navigation/native';
 
-
-
 const theme = themes.dark;
 
 const HomeScreen = ({ route }) => {
-const navigation = useNavigation();
-
-  const gymName = route.params?.gymName || 'My Gym';
+  const navigation = useNavigation();
+  const gymName = route.params?.gymName || 'Sai Gym';
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <ScrollView contentContainerStyle={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.avatar}>
-            <Icon name="barbell" size={24} color="#fff" />
-          </View>
-          <View style={styles.headerText}>
-            <Text style={styles.gymName}>{gymName}</Text>
-            <Text style={styles.version}>V1.0.0 | 1.1.1</Text>
-          </View>
-          <Icon name="chevron-forward" size={22} color={theme.textSecondary} />
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.avatar}>
+          <Icon name="barbell" size={24} color="#fff" />
         </View>
+        <View style={styles.headerText}>
+          <Text style={styles.gymName}>{gymName}</Text>
+          <Text style={styles.version}>V1.0.0 | 1.1.1</Text>
+        </View>
+        <Icon name="chevron-forward" size={22} color={theme.textSecondary} />
+      </View>
 
-
-        {/* MEMBERS */}
+      {/* Scrollable Content */}
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Section title="Membership">
-          <Card label="Defaulters" icon="alert-circle-outline" showDot={true} onPress={() => navigation.navigate('OQ')}  />
-          <Card label="Due today" showDot={true} icon="calendar-outline" />
+          <Card label="Defaulters" icon="alert-circle-outline" showDot onPress={() => navigation.navigate('OQ')} />
+          <Card label="Due today" icon="calendar-outline" showDot />
           <Card label="Followups" icon="repeat-outline" />
         </Section>
 
-        {/* PAYMENTS */}
         <Section title="Payments">
-          <Card label="Show QR" icon="qr-code-outline" onPress={() => navigation.navigate('OQ')}  />
+          <Card label="Show QR" icon="qr-code-outline" onPress={() => navigation.navigate('OQ')} />
           <Card label="Generate QR" icon="qr-code" />
           <Card label="Recent Transactions" icon="time-outline" />
         </Section>
 
-        
-        {/* DIET & HEALTH */}
         <Section title="Diet & Health">
           <Card label="Prepare Diet Plan" icon="nutrition-outline" />
-          <Card 
-  label="BMI Calculator" 
-  icon="calculator-outline" 
-  onPress={() => navigation.navigate('BMI')} 
-/>
-
+          <Card label="BMI Calculator" icon="calculator-outline" onPress={() => navigation.navigate('BMI')} />
         </Section>
 
-        {/* SETTINGS */}
-        {/* <Section title="Settings">
-          <Card label="Private Mode" icon="eye-off-outline" />
-          <Card label="Bluetooth" icon="bluetooth" />
-        </Section> */}
-
-        {/* INSIGHTS */}
         <Section title="Insights">
           <Card label="Sales Report" icon="stats-chart-outline" />
           <Card label="User Insights" icon="people-outline" />
         </Section>
 
-        {/* MISC */}
         <Section title="Other">
           <Card label="Profile" icon="person-circle-outline" />
           <Card label="Settings" icon="cog-outline" />
         </Section>
 
-        <View style={{ height: 100 }} /> {/* extra space for floating button */}
+        <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Floating Add Button */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => {
-          console.log('Add Member Pressed');
-        }}
-      >
+      {/* Floating Action Button */}
+      <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('AddMember')}>
         <Icon name="add" size={30} color="#fff" />
       </TouchableOpacity>
     </View>
@@ -97,7 +72,7 @@ const Section = ({ title, children }) => (
 );
 
 const Card = ({ label, icon, onPress, showDot }) => (
-  <TouchableOpacity onPress={onPress} style={styles.card} activeOpacity={0.8}>
+  <TouchableOpacity onPress={onPress} style={styles.card} activeOpacity={0.85}>
     <View style={styles.iconWrapper}>
       <Icon name={icon} size={22} color={theme.primary} />
       {showDot && <View style={styles.redDot} />}
@@ -105,7 +80,6 @@ const Card = ({ label, icon, onPress, showDot }) => (
     <Text style={styles.cardLabel}>{label}</Text>
   </TouchableOpacity>
 );
-
 
 const styles = StyleSheet.create({
   container: {
@@ -117,21 +91,22 @@ const styles = StyleSheet.create({
     bottom: 30,
     right: 20,
     backgroundColor: theme.primary,
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: Platform.OS === 'ios' ? 50 : 20,
+    marginHorizontal: 12,
+    padding: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   avatar: {
     backgroundColor: theme.secondary,
@@ -168,9 +143,10 @@ const styles = StyleSheet.create({
   cardGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 5,
     justifyContent: 'space-between',
-  },card: {
+  },
+  card: {
     width: '48%',
     padding: 16,
     borderRadius: 16,
@@ -178,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: 'rgba(255,255,255,0.08)'
   },
   cardLabel: {
     color: theme.textPrimary,
