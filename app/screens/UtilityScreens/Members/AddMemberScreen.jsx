@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,25 +13,60 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { themes } from '../../../utils/theme';
+import { Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { getAllPlans } from '../../../database/read';
+import { insertMember } from '../../../database/insert';
 
 const theme = themes.dark;
 
-const plans = [
-  { label: '1 Month', value: '1', days: 30 },
-  { label: '3 Months', value: '3', days: 90 },
-  { label: '6 Months', value: '6', days: 180 },
-  { label: '1 Year', value: '12', days: 365 },
-];
-
-const planPrices = {
-  '1': 1000,
-  '3': 2700,
-  '6': 5000,
-  '12': 9000,
-};
 
 
-const AddMemberScreen = ({ navigation }) => {
+
+const AddMemberScreen = () => {
+
+useEffect(() => {
+  const allPlans = async () => {
+    try {
+      const result = await getAllPlans();
+      console.log('All Plans:', result);
+      if (result && result.length > 0) {
+        const formattedPlans = result.map(plan =>
+          plansObject(plan.name, plan.price, plan.id, plan.duration)
+        );
+
+        // ✅ Convert array to one JSON object { id: price }
+        const formattedPlanPrices = result.reduce((acc, plan) => {
+          acc[plan.id] = plan.price;
+          return acc;
+        }, {});
+
+        setPlans(formattedPlans);
+        setPlanPrices(formattedPlanPrices);
+        setFees(result[0].price); // default fee
+        setFromDate(new Date());
+        setToDate(new Date(Date.now() + result[0].duration * 24 * 60 * 60 * 1000)); // default to current date + plan days
+      }
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+    }
+  };
+
+  allPlans();
+}, []);
+
+
+const [plans, setPlans] = useState([]);
+
+const plansObject = function(name, price, id, duration) {
+  return { label: name, value: id, price, days:duration };
+}
+
+
+const [planPrices, setPlanPrices] = useState({});
+
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [phone, setPhone] = useState('');
@@ -41,7 +76,9 @@ const AddMemberScreen = ({ navigation }) => {
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
   const [training, setTraining] = useState(false);
-  const [fees, setFees] = useState(planPrices[plan]);
+  const [fees, setFees] = useState();
+  const [showError, setError] = useState(false);
+
 
 
   // DOB states
@@ -50,19 +87,53 @@ const [dob, setDob] = useState(new Date(2008, 0, 1)); // January 1, 2008
 
   const handlePlanChange = (val) => {
   const selectedPlan = plans.find(p => p.value === val);
+  console.log('Selected Plan:', selectedPlan);
+  
+
   setPlan(val);
-  setFees(planPrices[val]); // reset fees to default for selected plan
-  const newToDate = new Date(fromDate);
-  newToDate.setDate(newToDate.getDate() + selectedPlan.days);
-  setToDate(newToDate);
+  setFees(planPrices[val]); // Get from the correctly structured object
+
+  if (selectedPlan) {
+    const newToDate = new Date(fromDate);
+    newToDate.setDate(newToDate.getDate() + selectedPlan.days);
+    setToDate(newToDate);
+  }
 };
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
+    setError(false);
+    console.log(fromDate.toISOString(), toDate.toISOString());
+    
     console.log({
       name, age, phone, emergencyPhone, medical, plan,
       fromDate, toDate, dob, training,
     });
-    navigation.goBack();
+
+    if (!name || !phone || !dob || !plan) {
+       setError(true);
+      Alert.alert('Error', 'Please fill all the required fields');
+     
+      return;
+    }
+     try {
+    await insertMember({
+      name,
+      age: parseInt(age),
+      phone,
+      emergency_phone: emergencyPhone,
+      medical_records: medical,
+      plan_id: parseInt(plan),
+      start_date: fromDate.toISOString(),
+      end_date: toDate.toISOString(),
+      personal_training: training,
+      dob: dob.toISOString(),
+    })
+
+    Alert.alert('Success', 'Member added successfully');
+    navigation.navigate('MembersList'); // Navigate to the members list screen
+  } catch (err) {
+    Alert.alert('Error', err.message || 'Failed to add member');
+  }
   };
 
  const handleDobChange = (event, selectedDate) => {
@@ -87,6 +158,7 @@ const [dob, setDob] = useState(new Date(2008, 0, 1)); // January 1, 2008
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.label}>Name</Text>
+
       <TextInput style={styles.input} value={name} onChangeText={setName} />
 
      <Text style={styles.label}>Age</Text>
@@ -146,7 +218,7 @@ const [dob, setDob] = useState(new Date(2008, 0, 1)); // January 1, 2008
 <Text style={styles.label}>Total Fees (₹)</Text>
 <TextInput
   style={styles.input}
-  value={fees.toString()}
+  value={fees ? fees.toString() : '' }
   keyboardType="numeric"
   onChangeText={(val) => setFees(Number(val))}
 />
@@ -158,8 +230,12 @@ const [dob, setDob] = useState(new Date(2008, 0, 1)); // January 1, 2008
     </Text>
   </View>
 )}
+      {showError && (<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 20, boder: 1 }}>
+        <Text style={{ color: theme.red }}>Correct the empty fields and try again!!</Text>
+      </View>)}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      
+      <TouchableOpacity style={styles.button} disabled={false} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
     </ScrollView>

@@ -1,14 +1,47 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { themes } from '../../utils/theme';
 import { useNavigation } from '@react-navigation/native';
+import { initTables } from '../../database/initTables';
+import { dropAllTables } from '../../database/delete';
+import { insertDefaultPlans } from '../../database/insert';
 
 const theme = themes.dark;
 
 const HomeScreen = ({ route }) => {
   const navigation = useNavigation();
   const gymName = route.params?.gymName || 'Sai Gym';
+
+  useEffect(() => {
+    console.log('HomeScreen mounted');
+    const initializeDatabase = async () => {
+      try {
+        await initTables();
+        console.log('Database initialized successfully');
+      } catch (error) {
+        console.error('Error initializing database:', error);
+      }
+    };
+
+    const deleteAllTables = async () => {
+      try {
+        await dropAllTables(); // Pass true to delete all tables first
+        console.log('All tables deleted and reinitialized successfully');
+      } catch (error) {
+        console.error('Error deleting and reinitializing tables:', error);
+      }
+    }
+    deleteAllTables();
+    initializeDatabase();
+    
+    insertDefaultPlans().then(() => {
+      console.log('Default plans inserted successfully');
+    }).catch(error => {
+      console.error('Error inserting default plans:', error);
+    });
+  
+  },[]);
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>

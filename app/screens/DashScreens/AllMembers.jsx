@@ -11,6 +11,7 @@ import {
 import { FlashList } from '@shopify/flash-list';
 import { themes } from '../../utils/theme'; // ✅ your dark theme
 import MemberCard from '../../components/MemberCard';
+import { useNavigation } from '@react-navigation/native';
 
 const colors = themes.dark; // Use dark theme colors
 
@@ -20,8 +21,12 @@ const membersData = Array.from({ length: 200 }, (_, i) => ({
   phone: `98${Math.floor(10000000 + Math.random() * 89999999)}`,
 }));
 
+
+
+
 const AllMembersScreen = () => {
   const [search, setSearch] = useState('');
+  const navigation = useNavigation();
 
   const filtered = membersData.filter(m =>
     m.phone.toLowerCase().includes(search.toLowerCase())
@@ -87,9 +92,9 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     borderRadius: 12,
     paddingHorizontal: 0,
-    paddingVertical: 20,
+    paddingVertical: 10,
     fontFamily: 'Poppins',
-    marginTop: 10,
+    marginTop: 5,
   },
   card: {
     backgroundColor: colors.card,

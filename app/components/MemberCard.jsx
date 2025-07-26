@@ -30,10 +30,11 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderRadius: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.15,
+    // shadowRadius: 6,
+    // elevation: 4,
+    
   },
   row: {
     flexDirection: 'row',
